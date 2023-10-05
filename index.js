@@ -6,6 +6,7 @@ const grantAccessContainer = document.querySelector(".grant-location-container")
 const searchForm = document.querySelector("[data-searchForm]");
 const loadingScreen = document.querySelector(".loading-container");
 const userInfoContainer = document.querySelector(".user-info-container");
+const notfound = document.querySelector(".ErrerImage");
 
 //initially vairables need????
 
@@ -74,16 +75,20 @@ async function fetchUserWeatherInfo(coordinates) {
         const response = await fetch(
             `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
           );
-        const  data = await response.json();
+        const data = await response.json();
 
         loadingScreen.classList.remove("active");
         userInfoContainer.classList.add("active");
+        notfound.classList.remove("active");
         renderWeatherInfo(data);
+
+        if (data.cod > 200) {
+          notfound.classList.add("active");
+          userInfoContainer.classList.remove("active");
+        }
+        
     }
     catch(err) {
-        loadingScreen.classList.remove("active"); 
-        //HW
-        
 
     }
 
@@ -121,7 +126,7 @@ function getLocation() {
         navigator.geolocation.getCurrentPosition(showPosition);
     }
     else {
-        //HW - show an alert for no gelolocation support available
+        
     }
 }
 
@@ -166,12 +171,18 @@ async function fetchSearchWeatherInfo(city) {
             `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
           );
         const data = await response.json();
+
         loadingScreen.classList.remove("active");
+        notfound.classList.remove("active");
         userInfoContainer.classList.add("active");
         renderWeatherInfo(data);
+
+        if (data.cod > 200) {
+          notfound.classList.add("active");
+          userInfoContainer.classList.remove("active");
+        }
     }
     catch(err) {
-        //hW
         
     }
 }
